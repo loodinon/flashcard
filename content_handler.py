@@ -8,19 +8,17 @@ warnings.filterwarnings("ignore")
 
 
 def get_content(kind):
-    if kind == "local":
-        df = pd.read_excel(
-            'assets/vocab.xlsx',
-            usecols=["Words", "Forms", "Meaning"]
-        ) 
-    elif kind == "online":
+    if kind == "full":
+        sheet_id = '1p4h-MCsB_U5kFUNuRyz-_7zx72_i3XKY'
+    elif kind == "condensed":
         sheet_id = '1lcreabZBcReMOtmsLz9psz64StLgsKpd'
-        url = f'https://docs.google.com/spreadsheets/d/{sheet_id}/gviz/tq?tqx=out:csv'
-        response = requests.get(url)
-        df = pd.read_csv(
-            StringIO(response.text), 
-            usecols=["Words", "Forms", "Meaning"]
-        )
+        
+    url = f'https://docs.google.com/spreadsheets/d/{sheet_id}/gviz/tq?tqx=out:csv'
+    response = requests.get(url)
+    df = pd.read_csv(
+        StringIO(response.text), 
+        usecols=["Words", "Forms", "Meaning"]
+    )
     return df
 
 

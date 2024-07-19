@@ -40,27 +40,27 @@ class App:
             bg=BG_COLOR
         )
 
-        self.local_button = tk.Label(
+        self.f1_button = tk.Label(
             master, 
-            text="Local\n(Press F1)", 
+            text="Full\n(Press F1)", 
             font=('Bahnschrift SemiBold', 14), 
             fg=self.back_text_color, 
             bg=self.back_color
         )
-        self.local_button.bind("<Button-1>", lambda event: self.load(event, "local"))
-        self.local_button.bind("<Enter>", lambda event: event.widget.config(cursor="hand2"))
-        self.local_button.bind("<Leave>", lambda event: event.widget.config(cursor=""))
+        self.f1_button.bind("<Button-1>", lambda event: self.load(event, "full"))
+        self.f1_button.bind("<Enter>", lambda event: event.widget.config(cursor="hand2"))
+        self.f1_button.bind("<Leave>", lambda event: event.widget.config(cursor=""))
 
-        self.online_button = tk.Label(
+        self.f2_button = tk.Label(
             master, 
-            text="Online\n(Press F2)", 
+            text="Condensed\n(Press F2)", 
             font=('Bahnschrift SemiBold', 14), 
             fg=self.back_text_color, 
             bg=self.back_color
         )
-        self.online_button.bind("<Button-1>", lambda event: self.load(event, "online"))
-        self.online_button.bind("<Enter>", lambda event: event.widget.config(cursor="hand2"))
-        self.online_button.bind("<Leave>", lambda event: event.widget.config(cursor=""))
+        self.f2_button.bind("<Button-1>", lambda event: self.load(event, "condensed"))
+        self.f2_button.bind("<Enter>", lambda event: event.widget.config(cursor="hand2"))
+        self.f2_button.bind("<Leave>", lambda event: event.widget.config(cursor=""))
 
         # Main page
         self.counter = tk.Label(
@@ -107,7 +107,8 @@ class App:
         self.prev_button.bind("<Leave>", lambda event: event.widget.config(cursor=""))
 
         self.next_arrow_img = ImageTk.PhotoImage(
-            Image.open('assets/right.png').resize(arrow_size, Image.BICUBIC))
+            Image.open('assets/right.png').resize(arrow_size, Image.BICUBIC)
+        )
         self.next_button = tk.Label(master, image=self.next_arrow_img, bg=BG_COLOR)
         self.next_button.bind('<Button-1>', self.next_flashcard)
         self.next_button.bind(
@@ -145,15 +146,15 @@ class App:
         self.counter.place_forget()
 
         self.app_name.place(relx=0.5, rely=0.45, anchor='center')
-        self.local_button.place(
+        self.f1_button.place(
             relx=0.25, rely=0.85, anchor='center', relheight=0.2, relwidth=0.4
         )
-        self.online_button.place(
+        self.f2_button.place(
             relx=0.75, rely=0.85, anchor='center', relheight=0.2, relwidth=0.4
         )
 
-        self.master.bind('<F1>', lambda event: self.load(event, "local"))
-        self.master.bind('<F2>', lambda event: self.load(event, "online"))
+        self.master.bind('<F1>', lambda event: self.load(event, "full"))
+        self.master.bind('<F2>', lambda event: self.load(event, "condensed"))
         self.master.unbind('<Left>')
         self.master.unbind('<Right>')
         self.master.unbind("<Return>")
@@ -162,8 +163,8 @@ class App:
 
     def place_content(self):
         self.app_name.place_forget()
-        self.local_button.place_forget()
-        self.online_button.place_forget()
+        self.f1_button.place_forget()
+        self.f2_button.place_forget()
 
         self.flashcard_frame.place(
             relx=0.5, rely=0.95, width=self.flashcard_size[0], height=self.flashcard_size[1], anchor='s'
@@ -190,7 +191,6 @@ class App:
         self.master.bind("<BackSpace>", lambda event: self.back())
         self.master.unbind('<F1>')
         self.master.unbind('<F2>')
-        self.master.unbind('<F12>')
 
     def load(self, event, kind):
         event.widget.config(cursor="wait")

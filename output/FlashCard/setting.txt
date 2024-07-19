@@ -1,4 +1,0 @@
-Width: 350
-Height: 300
-Arrow size: 40
-Max words: 50

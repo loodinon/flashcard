@@ -1,15 +1,11 @@
 import tkinter as tk
 from app import App
+from utils import read_setting
 
 
 if __name__ == "__main__":
-    with open('setting.txt', 'r') as file:
-        lines = file.readlines()
-        w = int(lines[0].split(":")[1].strip())
-        h = int(lines[1].split(":")[1].strip())
-        a = int(lines[2].split(":")[1].strip())
-        mw = int(lines[3].split(":")[1].strip())
-    
+    mw, mode = read_setting()
+
     root = tk.Tk()
-    app = App(root, app_size=(w, h), arrow_size=(a, a), max_words=mw)
+    app = App(root, max_words=mw, mode=mode)
     root.mainloop()

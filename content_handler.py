@@ -1,4 +1,4 @@
-from random import choice
+import random
 import pandas as pd
 import requests
 from io import StringIO
@@ -41,27 +41,32 @@ def handle_content(df):
     return contents
 
 
-def nlp_handle_content(contents, max_words):
-    nlp = en_core_web_sm.load()
+def nlp_handle_content(contents, max_words, mode):
+    if len(contents) < max_words:
+        max_words = len(contents)
+    
+    if mode == "relevant":
+        nlp = en_core_web_sm.load()
 
-    words = [c[0] for c in contents]
-    output = []
+        words = [c[0] for c in contents]
+        output = []
 
-    word = choice(words)
-    words.remove(word)
-    found_set = next((s for s in contents if list(s)[0] == word), None)
-    output.append(found_set)
-
-    nlp_word = nlp(word)
-    nlp_word_list = sorted(
-        [(wword, nlp_word.similarity(nlp(wword))) for wword in words],
-        key=lambda x: x[1],
-        reverse=True
-    )
-
-    if len(nlp_word_list) < max_words:
-        max_words = len(nlp_word_list)
-    for i in range(max_words):
-        found_set = next((s for s in contents if list(s)[0] == nlp_word_list[i][0]), None)
+        word = random.choice(words)
+        words.remove(word)
+        found_set = next((s for s in contents if list(s)[0] == word), None)
         output.append(found_set)
+
+        nlp_word = nlp(word)
+        nlp_word_list = sorted(
+            [(wword, nlp_word.similarity(nlp(wword))) for wword in words],
+            key=lambda x: x[1],
+            reverse=True
+        )
+
+        for i in range(max_words - 1):
+            found_set = next((s for s in contents if list(s)[0] == nlp_word_list[i][0]), None)
+            output.append(found_set)
+    elif mode == "random":
+        output = random.sample(contents, max_words)
+        
     return output

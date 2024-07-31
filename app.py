@@ -1,10 +1,12 @@
 import tkinter as tk
 from PIL import Image, ImageTk
 from content_handler import *
+from utils import read_setting
+import os
 
 
 class App:
-    def __init__(self, master, app_size=(350, 300), arrow_size=(40, 40), max_words=50):
+    def __init__(self, master, max_words=50, mode="random", app_size=(350, 300), arrow_size=(40, 40)):
         self.master = master
 
         BG_COLOR = "#e8f1fd"
@@ -24,6 +26,7 @@ class App:
 
         self.current_card_index = tk.IntVar()
         self.max_words = max_words
+        self.mode = mode
         self.app_size = app_size
         self.flashcard_size = (app_size[0]-100, app_size[1]-50)
 
@@ -39,6 +42,21 @@ class App:
             fg=self.back_color, 
             bg=BG_COLOR
         )
+
+        self.setting_button = tk.Label(
+            master, text="FLASHCARD", 
+            font=('Bahnschrift Bold Condensed', 45), 
+            fg=self.back_color, 
+            bg=BG_COLOR
+        )
+        self.setting_button_img = ImageTk.PhotoImage(
+            Image.open('assets/setting.png').resize(arrow_size, Image.BICUBIC)
+        )
+        self.setting_button = tk.Label(master, image=self.setting_button_img, bg=BG_COLOR)
+        self.setting_button.bind("<Button-1>", self.open_setting)
+        self.setting_button.bind("<Enter>", lambda event: event.widget.config(cursor="hand2"))
+        self.setting_button.bind("<Leave>", lambda event: event.widget.config(cursor=""))
+        
 
         self.f1_button = tk.Label(
             master, 
@@ -146,6 +164,7 @@ class App:
         self.counter.place_forget()
 
         self.app_name.place(relx=0.5, rely=0.45, anchor='center')
+        self.setting_button.place(relx=0.99, rely=0.01, anchor='ne')
         self.f1_button.place(
             relx=0.25, rely=0.85, anchor='center', relheight=0.2, relwidth=0.4
         )
@@ -153,6 +172,7 @@ class App:
             relx=0.75, rely=0.85, anchor='center', relheight=0.2, relwidth=0.4
         )
 
+        self.master.bind('<F12>', lambda event: self.open_setting(event))
         self.master.bind('<F1>', lambda event: self.load(event, "full"))
         self.master.bind('<F2>', lambda event: self.load(event, "condensed"))
         self.master.unbind('<Left>')
@@ -163,6 +183,7 @@ class App:
 
     def place_content(self):
         self.app_name.place_forget()
+        self.setting_button.place_forget()
         self.f1_button.place_forget()
         self.f2_button.place_forget()
 
@@ -189,15 +210,21 @@ class App:
         self.master.bind("<Return>", lambda event: self.swap_flashcard(event))
         self.master.bind("<space>", lambda event: self.swap_flashcard(event))
         self.master.bind("<BackSpace>", lambda event: self.back())
+        self.master.unbind('<F12>')
         self.master.unbind('<F1>')
         self.master.unbind('<F2>')
+        
+    def open_setting(self, event=None):
+        os.startfile('setting.txt')
 
     def load(self, event, kind):
+        self.max_words, self.mode = read_setting()
+        
         event.widget.config(cursor="wait")
 
         self.place_content()
         contents = handle_content(get_content(kind))
-        self.flashcards = nlp_handle_content(contents, self.max_words - 1)
+        self.flashcards = nlp_handle_content(contents, self.max_words, mode=self.mode)
         self.flashcard_label.config(
             text=self.flashcards[self.current_card_index.get()][2]
         )

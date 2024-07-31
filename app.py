@@ -25,8 +25,7 @@ class App:
         master.config(bg=BG_COLOR)
 
         self.current_card_index = tk.IntVar()
-        self.max_words = max_words
-        self.mode = mode
+        self.max_words, self.mode = read_setting()
         self.app_size = app_size
         self.flashcard_size = (app_size[0]-100, app_size[1]-50)
 
